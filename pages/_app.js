@@ -10,7 +10,9 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: sans-serif;
-    background-color: #D9E6F6;
+    background: #7b4397;
+    background: -webkit-linear-gradient(to top, #dc2430, #7b4397);
+    background: linear-gradient(to top, #dc2430, #7b4397);
   }
 
   #__next {
