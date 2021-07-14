@@ -1,30 +1,14 @@
 import React, { useState } from 'react';
+
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
+import ProfileRelationsFriends from '../src/components/ProfileRelationsFriends';
+import ProfileSidebar from '../src/components/ProfileSidebar';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
-import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
-
-const ProfileSidebar = (props) => {
-  return (
-    <Box>
-      <img src={`https://github.com/${props.githubUser}.png`} style={{ borderRadius: '8px'}}/>
-      <hr />
-
-      <p>
-        <a className="boxLink" href={`https://github.com/${props.githubUser}`}>
-          @{props.githubUser}
-        </a>
-      </p>
-      <hr />
-
-      <AlurakutProfileSidebarMenuDefault />
-    </Box>
-  )
-}
+import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 
 export default function Home() {
   const githubUser = 'felipessac';
-  const pessoasFavoritas = ['juunegreiros', 'omariosouto', 'peas', 'rafaballerini', 'marcobrunodev', 'felipefialho']
 
   const [comunidades, setComunidades] = useState([{
     title: 'Eu odeio acordar cedo', 
@@ -87,26 +71,7 @@ export default function Home() {
         </Box>
       </div>
       <div className="relationsArea" style={{gridArea: 'relationsArea'}}> 
-        <ProfileRelationsBoxWrapper>  
-          <h2 className='smallTitle'>
-            Pessoas da comunidade ({pessoasFavoritas.length})
-          </h2>
-          <ul>
-          {pessoasFavoritas.map((itemAtual, i) => {
-            if(i > 5){
-              return null
-            }
-            return (
-              <li key={i}>
-                <a href={`/users/${itemAtual}`} key={itemAtual}>
-                  <img src={`https://github.com/${itemAtual}.png`} />
-                  <span>{itemAtual}</span>
-                </a>
-              </li>
-            )
-          })}
-          </ul>
-        </ProfileRelationsBoxWrapper>
+        <ProfileRelationsFriends />
         <ProfileRelationsBoxWrapper>
           <h2 className='smallTitle'>
               Comunidades ({comunidades.length})
