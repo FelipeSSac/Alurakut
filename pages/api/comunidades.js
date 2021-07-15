@@ -4,7 +4,7 @@ export default async function recebedorDeRequests(request, response) {
 
   if(request.method === 'POST'){
 
-    const token = process.env.NEXT_FULL_ACCESS_TOKEN;
+    const token = '2362fa22a4e73261636a9a26c63894';
     const client = new SiteClient(token);
 
     const record = await client.items.create({
