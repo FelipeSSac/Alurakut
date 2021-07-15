@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
 import ProfileRelationsFriends from '../src/components/ProfileRelationsFriends';
@@ -10,10 +9,31 @@ import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons'
 export default function Home() {
   const githubUser = 'felipessac';
 
-  const [comunidades, setComunidades] = useState([{
-    title: 'Eu odeio acordar cedo', 
-    image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
-  }]);  
+  const [comunidades, setComunidades] = useState([]);  
+
+  useEffect(() => {
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: { 
+        'Authorization' : '74e58f8106249c219633c1927e087c',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',        
+      },
+      body: JSON.stringify({ "query": `query {
+        allCommunities {
+          id
+          name
+          imageUrl
+          creatorSlug
+        }
+      }`})
+    })
+    .then(async(response) => await response.json())
+    .then((response) => {
+      const comunidadesDato = response.data.allCommunities
+      setComunidades(comunidadesDato)
+    });
+  }, [])
 
   const handleCriaComunidade = (e) => {
     e.preventDefault();
@@ -21,13 +41,23 @@ export default function Home() {
     const dadosForm = new FormData(e.target);
 
     const comunidade = {
-      title: dadosForm.get('title'),
-      image: dadosForm.get('image'),
+      name: dadosForm.get('title'),
+      imageUrl: dadosForm.get('image'),
+      creatorSlug: githubUser,
     }
 
-    setComunidades([...comunidades, comunidade]);
-    console.log(comunidades);
-
+    fetch('/api/comunidades', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(comunidade)
+    })
+    .then(async (response) => {
+      const dados = await response.json();
+      const novacomunidade = dados.record;
+      setComunidades([...comunidades, novacomunidade]);
+    })
   }
 
   return (
@@ -74,7 +104,7 @@ export default function Home() {
         <ProfileRelationsFriends />
         <ProfileRelationsBoxWrapper>
           <h2 className='smallTitle'>
-              Comunidades ({comunidades.length})
+            Comunidades ({comunidades.length})
             </h2>
             <ul>
             {comunidades.map((itemAtual, i) => {
@@ -83,9 +113,9 @@ export default function Home() {
             }
               return (
                 <li key={i}>
-                  <a href={`/users/${itemAtual.title}`}>
-                    <img src={itemAtual.image || `https://picsum.photos/id/${i * 36}/200/300`} />
-                    <span>{itemAtual.title}</span>
+                  <a href={`/comunity/${itemAtual.name}`}>
+                    <img src={itemAtual.imageUrl} />
+                    <span>{itemAtual.name}</span>
                   </a>
                 </li>
               )

@@ -22,7 +22,6 @@ export default function ProfileRelationsFriends () {
     .then((respostaCompleta) => {
       setSeguidores(respostaCompleta);
     }) 
-    console.log(seguidores)
   }, [])
 
   return (
