@@ -2,20 +2,11 @@ import { useEffect, useState } from 'react';
 import { ProfileRelationsBoxWrapper } from '../ProfileRelations';
 
 
-export default function ProfileRelationsFriends () {
-  const pessoasFavoritas = [
-    'juunegreiros', 
-    'omariosouto', 
-    'peas', 
-    'rafaballerini', 
-    'marcobrunodev', 
-    'felipefialho'
-  ]
-
+export default function ProfileRelationsFriends (props) {
   const [seguidores, setSeguidores] = useState([]);
 
   useEffect(() => {
-    fetch('https://api.github.com/users/FelipeSSac/followers')
+    fetch(`https://api.github.com/users/${props.githubUser}/followers`)
     .then((respostaDoServidor) => {
       return respostaDoServidor.json();
     })

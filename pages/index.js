@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+
+import nookies from 'nookies';
+import jwt from 'jsonwebtoken';
+
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
 import ProfileRelationsFriends from '../src/components/ProfileRelationsFriends';
@@ -6,9 +10,7 @@ import ProfileSidebar from '../src/components/ProfileSidebar';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 
-export default function Home() {
-  const githubUser = 'felipessac';
-
+export default function Home(props) {
   const [comunidades, setComunidades] = useState([]);  
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function Home() {
     const comunidade = {
       name: dadosForm.get('title'),
       imageUrl: dadosForm.get('image'),
-      creatorSlug: githubUser,
+      creatorSlug: props.githubUser,
     }
 
     fetch('/api/comunidades', {
@@ -62,10 +64,10 @@ export default function Home() {
 
   return (
     <>
-      <AlurakutMenu githubUser={githubUser} />
+      <AlurakutMenu githubUser={props.githubUser} />
       <MainGrid>
       <div className="profileArea" style={{gridArea: 'profileArea'}}>
-        <ProfileSidebar githubUser={githubUser} />
+        <ProfileSidebar githubUser={props.githubUser} />
       </div>
       <div className="welcomeArea" style={{gridArea: 'welcomeArea'}}>
         <Box>
@@ -101,7 +103,7 @@ export default function Home() {
         </Box>
       </div>
       <div className="relationsArea" style={{gridArea: 'relationsArea'}}> 
-        <ProfileRelationsFriends />
+        <ProfileRelationsFriends githubUser={props.githubUser} />
         <ProfileRelationsBoxWrapper>
           <h2 className='smallTitle'>
             Comunidades ({comunidades.length})
@@ -126,4 +128,29 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const token = nookies.get(context).USER_TOKEN
+
+  if (!token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props:{
+        message: 'erro'
+      },
+    }
+  }
+
+  const { githubUser } = jwt.decode(token)
+
+
+  return {
+    props: {
+      githubUser
+    },
+  }
 }
